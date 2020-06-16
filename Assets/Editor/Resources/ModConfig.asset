@@ -11,10 +11,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
   m_Name: ModConfig
   m_EditorClassIdentifier: 
-  id: 
-  title: 
+  id: plugins
+  title: Plug-Ins
   author: Goofy
-  description: 
+  description: 'Select the correct device based on a duplex receptacle.
+
+
+    Manual idea by Asew
+
+
+    TP supported
+
+
+    Ruleseed supported'
   version: 1.0
   outputFolder: build
-  previewImage: {fileID: 0}
+  previewImage: {fileID: 2800000, guid: 35a2b2f380534954a83a50778c07dd59, type: 3}
