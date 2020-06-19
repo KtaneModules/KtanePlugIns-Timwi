@@ -33,6 +33,7 @@ public class PlugInsScript : MonoBehaviour
     private bool inputAnim;
     Coroutine timer;
     bool tpPress = false;
+    bool timerStrike = false;
 
     List<string> devices = new List<string>() { "Bedside lamp", "Waffle iron", "Washing machine", "Window fan", "Blender", "Vacuum cleaner", "Desk fan", "DVD player", "Franks 2000 inch TV", "Hairdryer", "Iron", "Laptop charger", "Microwave", "Sewing machine", "Solar water heater", "Telephone", "Toaster", "Nightlight", "Paper shredder", "Printer", "Radiator", "Refrigerator", "Air conditioner", "Stereo system", "VHC recorder", "Alarm clock", "Answering machine", "Barbecue grill", "Blow dryer", "Burglar alarm", "Calculator", "Camera", "Can opener", "CD player", "Ceiling fan", "Cell phone", "Clock", "Clothes dryer", "Coffee grinder", "Coffee maker", "Computer", "Convection oven", "Copier", "Crock pot", "Curling iron", "Dishwasher", "Doorbell", "Edge trimmer", "Electric drill", "Electric guitar", "Electric razor", "Electric toothbrush", "Espresso maker", "Fax machine", "Food processor", "Freezer", "Garage door", "Headphones", "Hot plate", "Humidifier", "Ice cream maker", "Lawn mower", "Leaf blower", "Oven", "Mixer", "MP3 player", "Pressure cooker", "Radio", "Record player", "Rotisserie", "Scanner", "Smoke detector", "Stove", "Trash compactor", "Vaporizer", };
 
@@ -77,8 +78,12 @@ public class PlugInsScript : MonoBehaviour
                     StartCoroutine(Solved());
             }
             else
+            {
+                timerStrike = false;
                 StartCoroutine(Reset());
-            StopCoroutine(timer);
+            }
+            if (timer != null)
+                StopCoroutine(timer);
             timer = null;
             return false;
         };
@@ -122,16 +127,16 @@ public class PlugInsScript : MonoBehaviour
 
     private IEnumerator Timer()
     {
+        timerStrike = true;
         var elapsed = 0f;
-        var duration = tpPress ? 15f : 3f;
+        var duration = tpPress ? 24f : 3f;
         while (elapsed < duration)
         {
-            yield return new WaitForSeconds(.1f);
-            elapsed += .1f;
+            yield return null;
+            elapsed += Time.deltaTime;
         }
         StartCoroutine(Reset());
         tpPress = false;
-
     }
 
     void Generate()
@@ -169,10 +174,12 @@ public class PlugInsScript : MonoBehaviour
         if (initialReset)
             initialReset = false;
         else
+        {
+            Debug.LogFormat(@"[Plug-Ins #{0}] Strike! - {1}", moduleId, timerStrike ? "Time-out!" : "Incorrect button!");
             BombModule.HandleStrike();
+        }
 
         resetActive = true;
-
 
         var duration = .2f;
         var elapsed = 0f;
@@ -261,7 +268,7 @@ public class PlugInsScript : MonoBehaviour
         {
             yield return null;
             var btn = int.Parse(m.Groups[1].Value);
-            Buttons[btn].OnInteract();
+            Buttons[btn - 1].OnInteract();
             yield return "solve";
             yield break;
         }
@@ -274,7 +281,7 @@ public class PlugInsScript : MonoBehaviour
 
     IEnumerator TwitchHandleForcedSolve()
     {
-        Debug.LogFormat(@"[The Missing Letter #{0}] Module was force solved by TP", moduleId);
+        Debug.LogFormat(@"[Plug-Ins #{0}] Module was force solved by TP", moduleId);
 
         if (timer != null)
         {
