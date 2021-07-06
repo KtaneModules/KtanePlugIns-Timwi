@@ -11,7 +11,6 @@ using Rnd = UnityEngine.Random;
 
 public class PlugInsScript : MonoBehaviour
 {
-
     public KMBombInfo BombInfo;
     public KMBombModule BombModule;
     public KMAudio Audio;
@@ -27,6 +26,7 @@ public class PlugInsScript : MonoBehaviour
     int moduleId;
     bool moduleSolved = false;
     bool resetActive = false;
+    bool receptacleShown = false;
     bool initialReset = true;
     int correctBtn;
     int currentStage = 0;
@@ -46,7 +46,7 @@ public class PlugInsScript : MonoBehaviour
 
         Initiate.OnInteract += delegate
         {
-            if (moduleSolved || resetActive)
+            if (moduleSolved || resetActive || !receptacleShown)
                 return false;
             StartCoroutine(Input());
             return false;
@@ -64,7 +64,7 @@ public class PlugInsScript : MonoBehaviour
     {
         return delegate ()
         {
-            if (moduleSolved || resetActive)
+            if (moduleSolved || resetActive || receptacleShown)
                 return false;
             if (btn == correctBtn)
             {
@@ -117,11 +117,8 @@ public class PlugInsScript : MonoBehaviour
             for (var i = 0; i < Buttons.Length; i++)
                 Buttons[i].transform.localPosition = Vector3.Lerp(Buttons[i].transform.localPosition, new Vector3(Buttons[i].transform.localPosition.x, 0.03f, Buttons[i].transform.localPosition.z), elapsed / duration);
         }
-        for (var i = 0; i < Buttons.Length; i++)
-            GetComponent<KMSelectable>().Children[i] = Buttons[i];
-        GetComponent<KMSelectable>().Children[5] = null;
-        GetComponent<KMSelectable>().UpdateChildren();
         inputAnim = false;
+        receptacleShown = false;
         timer = StartCoroutine(Timer());
     }
 
@@ -163,9 +160,8 @@ public class PlugInsScript : MonoBehaviour
 
         Debug.LogFormat(@"[Plug-Ins #{0}] Selected receptacles - {1} and {2}", moduleId, usedDuplex == 0 ? devices[ixs[0]] : devices[ixs[1]], usedDuplex == 0 ? devices[ixs[1]] : devices[ixs[0]]);
         Debug.LogFormat(@"[Plug-Ins #{0}] Button labels in reading order - {1}", moduleId, Labels.Select(l => l.text).ToList().Join(", "));
-        Debug.LogFormat(@"[Plug-Ins #{0}] Correct button to press reading order - {1} ({2})", moduleId, correctBtn + 1, Labels[correctBtn].text);
+        Debug.LogFormat(@"[Plug-Ins #{0}] Correct button to press reading in order - {1} ({2})", moduleId, correctBtn + 1, Labels[correctBtn].text);
     }
-
 
     IEnumerator Reset()
     {
@@ -203,11 +199,8 @@ public class PlugInsScript : MonoBehaviour
                 Buttons[i].transform.localPosition = Vector3.Lerp(Buttons[i].transform.localPosition, new Vector3(Buttons[i].transform.localPosition.x, 0.025f, Buttons[i].transform.localPosition.z), elapsed / duration);
         }
 
-        for (var i = 0; i < Buttons.Length; i++)
-            GetComponent<KMSelectable>().Children[i] = null;
-        GetComponent<KMSelectable>().Children[5] = Initiate;
-        GetComponent<KMSelectable>().UpdateChildren();
         resetActive = false;
+        receptacleShown = true;
         Generate();
     }
 
@@ -216,11 +209,6 @@ public class PlugInsScript : MonoBehaviour
         moduleSolved = true;
         for (var i = 0; i < Duplex.Length; i++)
             Duplex[i].material = Black;
-
-        for (var i = 0; i < Buttons.Length; i++)
-            GetComponent<KMSelectable>().Children[i] = null;
-        GetComponent<KMSelectable>().Children[5] = null;
-        GetComponent<KMSelectable>().UpdateChildren();
 
         var duration = .2f;
         var elapsed = 0f;

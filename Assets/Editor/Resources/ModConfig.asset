@@ -14,16 +14,10 @@ MonoBehaviour:
   id: plugins
   title: Plug-Ins
   author: Goofy
-  description: 'Select the correct device based on a duplex receptacle.
-
-
-    Manual idea by Asew
-
-
-    TP supported
-
-
-    Ruleseed supported'
+  description: "This is a [b]re-upload[/b] of Goofy\u2019s module. Please [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2127295810]unsubscribe
+    from the old version[/url].\n\nSelect the correct device based on a duplex receptacle.\n\nManual
+    idea by Asew. TP supported. Ruleseed supported.\n\nManual HTML: https://ktane.timwi.de/HTML/Plug-Ins.html\r\nManual
+    PDF: https://ktane.timwi.de/PDF/Plug-Ins.pdf"
   version: 1.0
   outputFolder: build
-  previewImage: {fileID: 2800000, guid: 35a2b2f380534954a83a50778c07dd59, type: 3}
+  previewImage: {fileID: 2800000, guid: bad7941806f6a3c4f9fcf656878da437, type: 3}
