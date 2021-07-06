@@ -271,23 +271,18 @@ public class PlugInsScript : MonoBehaviour
     {
         Debug.LogFormat(@"[Plug-Ins #{0}] Module was force solved by TP", moduleId);
 
-        if (timer != null)
-        {
-            Buttons[correctBtn].OnInteract();
-            yield return true;
-            yield return new WaitUntil(() => !resetActive);
-        }
-
         while (!moduleSolved)
         {
-            if (moduleSolved)
-                break;
-            Initiate.OnInteract();
-            yield return true;
-            yield return new WaitUntil(() => !inputAnim);
+            if (timer == null)
+            {
+                yield return new WaitForSeconds(.25f);
+                Initiate.OnInteract();
+                while (inputAnim)
+                    yield return null;
+            }
             Buttons[correctBtn].OnInteract();
-            yield return true;
-            yield return new WaitUntil(() => !resetActive);
+            while (resetActive)
+                yield return true;
         }
     }
 }
