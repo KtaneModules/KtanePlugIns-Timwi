@@ -1,11 +1,7 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Xml.Xsl;
 using UnityEngine;
 using Rnd = UnityEngine.Random;
 
@@ -21,6 +17,7 @@ public class PlugInsScript : MonoBehaviour
     public Material[] Receptacles;
     public MeshRenderer[] Duplex;
     public KMRuleSeedable KMRuleSeedable;
+    public GameObject[] ProgressDots;
 
     static int moduleIdCounter = 1;
     int moduleId;
@@ -68,6 +65,7 @@ public class PlugInsScript : MonoBehaviour
                 return false;
             if (btn == correctBtn)
             {
+                Audio.PlaySoundAtTransform("Beep", transform);
                 currentStage++;
                 if (currentStage < 3)
                 {
@@ -76,6 +74,9 @@ public class PlugInsScript : MonoBehaviour
                 }
                 else
                     StartCoroutine(Solved());
+
+                for (var i = 0; i < 3; i++)
+                    ProgressDots[i].SetActive(currentStage > i);
             }
             else
             {
@@ -87,7 +88,6 @@ public class PlugInsScript : MonoBehaviour
             timer = null;
             return false;
         };
-
     }
 
     IEnumerator Input()
@@ -232,6 +232,7 @@ public class PlugInsScript : MonoBehaviour
                 Buttons[i].transform.localPosition = Vector3.Lerp(Buttons[i].transform.localPosition, new Vector3(Buttons[i].transform.localPosition.x, 0.025f, Buttons[i].transform.localPosition.z), elapsed / duration);
         }
         BombModule.HandlePass();
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
     }
 
 #pragma warning disable 414
